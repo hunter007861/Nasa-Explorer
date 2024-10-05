@@ -5,6 +5,10 @@ import Spinner from "react-spinners/RingLoader";
 function App() {
   const Home = React.lazy(() => import("./pages/Home"));
   const MarsRover = React.lazy(() => import("./pages/MarsRover"));
+  const NeoWs = React.lazy(() => import("./pages/NeoWs"));
+  const AOPD = React.lazy(() => import("./pages/APOD"));
+  const Earth = React.lazy(() => import("./pages/Earth"));
+
   const loading = () => (
     <div className="flex justify-center items-center h-lvh">
       <Spinner className="loader" size={150} color="#fff" />
@@ -23,7 +27,30 @@ function App() {
         <React.Suspense fallback={loading()}>
           <Routes>
             <Route exact path="/" name="Home page" element={<Home />} />
-            <Route exact path="/marsrover" name="Mars Rover" element={<MarsRover />} />
+            <Route
+              exact
+              path="/marsrover"
+              name="Mars Rover"
+              element={<MarsRover />}
+            />
+            <Route
+              exact
+              path="/neows"
+              name="Astoriod NeoWs"
+              element={<NeoWs />}
+            />
+            <Route
+              exact
+              path="/aopd"
+              name="AOPD"
+              element={<AOPD />}
+            />
+            <Route
+              exact
+              path="/earth"
+              name="Earth"
+              element={<Earth />}
+            />
             <Route path="*" element={<Navigate replace to="/" />} />
           </Routes>
         </React.Suspense>
