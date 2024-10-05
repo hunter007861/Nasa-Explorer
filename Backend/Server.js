@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const aopd = require('./src/routers/api/v1/aopd/aopd.routes');
+const marsrover = require('./src/routers/api/v1/marsrover/marsrover.routes');
+const epic = require('./src/routers/api/v1/epic/epic.routes');
 
 //app config
 const app = express();
@@ -44,8 +46,9 @@ app.use(cors(corsOptions));
 
 //routes
 app.get("/", (req, res) => res.status(200).send("Nasa API webserver"));
-app.use("/apod", aopd);
-
+app.use("/aopd", aopd);
+app.use("/marsrover", marsrover);
+app.use("/epic", epic);
 //Listening
 app.listen(port, () => {
 	console.log(`Server is running on port: ${port}`);

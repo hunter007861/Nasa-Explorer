@@ -1,10 +1,10 @@
 const fetch = require("node-fetch");
 require("dotenv").config();
 
-const aopd = async (req, res) => {
+const epic = async (req, res) => {
   try {
     let response = await fetch(
-      `https://api.nasa.gov/planetary/apod?api_key=${process.env.API_SECRET_KEY}&count=10`,
+      `https://api.nasa.gov/EPIC/api/natural/images?api_key=${process.env.API_SECRET_KEY}`,
       { method: "GET" }
     );
     let data = await response.json();
@@ -17,4 +17,4 @@ const aopd = async (req, res) => {
     res.status(500).send("Error in Retiving");
   }
 };
-module.exports = aopd;
+module.exports = epic;
