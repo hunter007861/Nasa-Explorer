@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 var corsOptions = {
   methods: "GET, PUT, POST, DELETE, PATCH",
   credentials: true,
-  origin: "http://localhost:5173",
+  origin: "https://nasa-explorer-j0vs.onrender.com",
 };
 
 var allowCrossDomain = function (req, res, next) {
