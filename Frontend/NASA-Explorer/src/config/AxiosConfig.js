@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:5000";
+const baseURL = "https://nasa-explorer-backend-xed6.onrender.com";
 
 const Axios = axios.create({
     baseURL: baseURL,
