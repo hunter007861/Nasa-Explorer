@@ -5,7 +5,7 @@ const epicImage = async (req, res) => {
   try {
     console.log(req.query.name)
     const response = await fetch(
-      `https://api.nasa.gov/EPIC/archive/natural/${req.query.name}?api_key=${process.env.API_SECRET_KEY}`, //http://localhost:5000/epic/image?name=2024/10/04/png/epic_1b_20241004002713.png
+      `https://api.nasa.gov/EPIC/archive/enhanced/${req.query.name}?api_key=${process.env.API_SECRET_KEY}`, //http://localhost:5000/epic/image?name=2024/10/04/png/epic_1b_20241004002713.png
       { method: "GET" }
     );
     response.body.pipe(res);
