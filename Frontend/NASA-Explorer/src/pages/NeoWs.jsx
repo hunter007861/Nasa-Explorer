@@ -131,7 +131,7 @@ const NEOsDashboard = () => {
               Near Earth Objects (NEOs)
             </p>
             <p className="text-[#92b5c9] text-sm font-normal">
-              Explore the universe and learn more about near earth objects.
+              Explore the universe and learn more about near earth objects. Select any two dates and see what objects were near earth on those days.
             </p>
           </div>
         </div>
