@@ -1,129 +1,227 @@
-import React from "react";
-import Button from "@mui/material/Button";
+import React, { useState } from "react";
 
-const NeoWs = () => {
+// Helper function to add days to a date
+const addDays = (date, days) => {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+};
+
+// Helper function to format date as 'YYYY-MM-DD' for consistency
+const formatDate = (date) => {
+  return date.toISOString().split("T")[0];
+};
+
+// Get the number of days in a specific month/year
+const getDaysInMonth = (month, year) => {
+  return new Date(year, month + 1, 0).getDate();
+};
+
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const NEOsDashboard = () => {
+  // Calendar Data State (default: August 2023)
+  const [currentMonth, setCurrentMonth] = useState(7); // August (0-indexed)
+  const [currentYear, setCurrentYear] = useState(2023);
+
+  // State to manage selected start and end dates
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+
+  // Handle month and year navigation
+  const handlePrevMonth = () => {
+    if (currentMonth === 0) {
+      setCurrentMonth(11); // Go to December
+      setCurrentYear(currentYear - 1); // Decrease the year
+    } else {
+      setCurrentMonth(currentMonth - 1); // Go to previous month
+    }
+  };
+
+  const handleNextMonth = () => {
+    if (currentMonth === 11) {
+      setCurrentMonth(0); // Go to January
+      setCurrentYear(currentYear + 1); // Increase the year
+    } else {
+      setCurrentMonth(currentMonth + 1); // Go to next month
+    }
+  };
+
+  // Handle selecting a start or end date
+  const handleDateClick = (day) => {
+    const selectedDate = new Date(currentYear, currentMonth, day);
+
+    // If startDate is not selected, set the start date
+    if (!startDate || (startDate && endDate)) {
+      setStartDate(selectedDate);
+      setEndDate(null); // Reset end date
+    } else if (startDate && !endDate) {
+      // If endDate is not selected, set the end date only if it's within 7 days from startDate
+      const maxEndDate = addDays(startDate, 7);
+      if (selectedDate <= maxEndDate) {
+        setEndDate(selectedDate);
+      }
+    }
+  };
+
+  // Check if a date is within a valid range for selection (for end date)
+  const isDateDisabled = (day) => {
+    const selectedDate = new Date(currentYear, currentMonth, day);
+    if (startDate && !endDate) {
+      const maxEndDate = addDays(startDate, 7);
+      return selectedDate < startDate || selectedDate > maxEndDate;
+    }
+    return false;
+  };
+
+  // Check if a date is selected
+  const isDateSelected = (day) => {
+    const selectedDate = new Date(currentYear, currentMonth, day);
+    if (startDate && formatDate(startDate) === formatDate(selectedDate)) {
+      return "bg-[#139cec] text-white"; // Start date style
+    } else if (endDate && formatDate(endDate) === formatDate(selectedDate)) {
+      return "bg-[#139cec] text-white"; // End date style
+    }
+    return "";
+  };
+
+  // Get the number of days in the current month
+  const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+
   return (
-    <div className="relative flex min-h-screen flex-col bg-[#111118] overflow-x-hidden font-sans">
-      <div className="layout-container flex h-full grow flex-col">
-        <div className="px-40 flex flex-1 justify-center py-5">
-          <div className="layout-content-container flex flex-col w-[512px] max-w-[512px] py-5 max-w-[960px] flex-1">
-            <h2 className="text-white text-[28px] font-bold leading-tight px-4 text-center pb-3 pt-5">
-              Near Earth Object Web Service
-            </h2>
-            <p className="text-white text-base font-normal leading-normal pb-3 pt-1 px-4 text-center">
-              NeoWs (Near Earth Object Web Service) is a web service for near
-              earth Asteroid information. With NeoWs a user can: search for
-              Asteroids based on their closest approach date to Earth, lookup a
-              specific Asteroid with its NASA JPL small body id, as well as
-              browse the overall data-set.
+    <div className="px-40 flex flex-1 justify-center py-5">
+      <div className="layout-content-container flex flex-col max-w-[960px] flex-1">
+        <div className="flex flex-wrap justify-between gap-3 p-4">
+          <div className="flex min-w-72 flex-col gap-3">
+            <p className="text-white text-[32px] font-bold">
+              Near Earth Objects (NEOs)
             </p>
+            <p className="text-[#92b5c9] text-sm font-normal">
+              Explore the universe and learn more about near earth objects.
+            </p>
+          </div>
+        </div>
 
-            {/* Form Fields */}
-            <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-              <label className="flex flex-col min-w-40 flex-1">
-                <p className="text-white text-base font-medium leading-normal pb-2">
-                  Start Date (Optional)
-                </p>
-                <input
-                  placeholder="YYYY-MM-DD"
-                  className="form-input flex w-full resize-none rounded-xl text-white bg-[#292938] h-14 p-4 text-base placeholder:text-[#9d9db8]"
-                />
-              </label>
-            </div>
-
-            <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-              <label className="flex flex-col min-w-40 flex-1">
-                <p className="text-white text-base font-medium leading-normal pb-2">
-                  End Date (Optional)
-                </p>
-                <input
-                  placeholder="YYYY-MM-DD"
-                  className="form-input flex w-full resize-none rounded-xl text-white bg-[#292938] h-14 p-4 text-base placeholder:text-[#9d9db8]"
-                />
-              </label>
-            </div>
-
-            <div className="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-              <label className="flex flex-col min-w-40 flex-1">
-                <p className="text-white text-base font-medium leading-normal pb-2">
-                  Asteroid ID (Optional)
-                </p>
-                <input
-                  placeholder="ID"
-                  className="form-input flex w-full resize-none rounded-xl text-white bg-[#292938] h-14 p-4 text-base placeholder:text-[#9d9db8]"
-                />
-              </label>
-            </div>
-
-            {/* Submit Button */}
-            <div className="flex px-4 py-3 justify-start">
-              <Button
-                variant="contained"
-                style={{
-                  backgroundColor: "#1919e6",
-                  textTransform: "none",
-                  fontWeight: "bold",
-                }}
+        {/* Calendar */}
+        <div className="flex flex-wrap items-center justify-center gap-6 p-4">
+          <div className="flex min-w-72 max-w-[336px] flex-1 flex-col gap-0.5">
+            <div className="flex items-center p-1 justify-between">
+              <button
+                className="text-white text-base font-bold"
+                onClick={handlePrevMonth}
               >
-                Search
-              </Button>
+                {"<"}
+              </button>
+              <p className="text-white text-base font-bold">
+                {months[currentMonth]} {currentYear}
+              </p>
+              <button
+                className="text-white text-base font-bold"
+                onClick={handleNextMonth}
+              >
+                {">"}
+              </button>
             </div>
 
-            {/* Table */}
-            <div className="px-4 py-3">
-              <div className="flex overflow-hidden rounded-xl border border-[#3c3c53] bg-[#111118]">
-                <table className="flex-1">
-                  <thead>
-                    <tr className="bg-[#1c1c26]">
-                      <th className="px-4 py-3 text-left text-white text-sm font-medium">
-                        Name
-                      </th>
-                      <th className="px-4 py-3 text-left text-white text-sm font-medium">
-                        Size
-                      </th>
-                      <th className="px-4 py-3 text-left text-white text-sm font-medium">
-                        Distance
-                      </th>
-                      <th className="px-4 py-3 text-left text-white text-sm font-medium">
-                        Next Approach Date
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {/* Example Rows */}
-                    <tr className="border-t border-t-[#3c3c53]">
-                      <td className="h-[72px] px-4 py-2 text-white text-sm">
-                        Asteroid 1
-                      </td>
-                      <td className="h-[72px] px-4 py-2 text-[#9d9db8] text-sm">
-                        100m
-                      </td>
-                      <td className="h-[72px] px-4 py-2 text-[#9d9db8] text-sm">
-                        200,000km
-                      </td>
-                      <td className="h-[72px] px-4 py-2 text-[#9d9db8] text-sm">
-                        2023-01-01
-                      </td>
-                    </tr>
-                    <tr className="border-t border-t-[#3c3c53]">
-                      <td className="h-[72px] px-4 py-2 text-white text-sm">
-                        Asteroid 2
-                      </td>
-                      <td className="h-[72px] px-4 py-2 text-[#9d9db8] text-sm">
-                        150m
-                      </td>
-                      <td className="h-[72px] px-4 py-2 text-[#9d9db8] text-sm">
-                        250,000km
-                      </td>
-                      <td className="h-[72px] px-4 py-2 text-[#9d9db8] text-sm">
-                        2023-01-02
-                      </td>
-                    </tr>
-                    {/* Add more rows as needed */}
-                  </tbody>
-                </table>
-              </div>
+            {/* Calendar Table */}
+            <div className="grid grid-cols-7">
+              {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (
+                <p
+                  key={index}
+                  className="text-white text-[13px] font-bold text-center"
+                >
+                  {day}
+                </p>
+              ))}
+
+              {/* Calendar Numbers */}
+              {[...Array(daysInMonth).keys()].map((day) => (
+                <button
+                  key={day}
+                  onClick={() => handleDateClick(day + 1)}
+                  disabled={isDateDisabled(day + 1)}
+                  className={`h-12 w-full ${isDateSelected(day + 1)} ${
+                    isDateDisabled(day + 1)
+                      ? "opacity-50 cursor-not-allowed"
+                      : "text-[#92b5c9]"
+                  } text-sm font-medium`}
+                >
+                  {day + 1}
+                </button>
+              ))}
             </div>
+          </div>
+        </div>
+
+        {/* Search Button */}
+        <div className="flex px-4 py-3">
+          <button className="w-full h-12 bg-[#139cec] text-white font-bold rounded-xl">
+            Search
+          </button>
+        </div>
+
+        {/* Data Table */}
+        <div className="p-4">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-[#325367]">
+              <thead>
+                <tr>
+                  <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
+                    Name
+                  </th>
+                  <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
+                    Size
+                  </th>
+                  <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
+                    Closest Approach
+                  </th>
+                  <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
+                    Velocity
+                  </th>
+                  <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
+                    Distance
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* Mock data */}
+                <tr>
+                  <td className="px-4 py-2 text-[#92b5c9] text-sm">
+                    Asteroid 1
+                  </td>
+                  <td className="px-4 py-2 text-[#92b5c9] text-sm">500m</td>
+                  <td className="px-4 py-2 text-[#92b5c9] text-sm">
+                    2024-10-06
+                  </td>
+                  <td className="px-4 py-2 text-[#92b5c9] text-sm">15 km/s</td>
+                  <td className="px-4 py-2 text-[#92b5c9] text-sm">0.05 AU</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2 text-[#92b5c9] text-sm">
+                    Asteroid 2
+                  </td>
+                  <td className="px-4 py-2 text-[#92b5c9] text-sm">1.2 km</td>
+                  <td className="px-4 py-2 text-[#92b5c9] text-sm">
+                    2024-10-07
+                  </td>
+                  <td className="px-4 py-2 text-[#92b5c9] text-sm">20 km/s</td>
+                  <td className="px-4 py-2 text-[#92b5c9] text-sm">0.02 AU</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -131,4 +229,4 @@ const NeoWs = () => {
   );
 };
 
-export default NeoWs;
+export default NEOsDashboard;
