@@ -24,3 +24,47 @@
 - **HTTP Client**: Axios
 - **Routing**: React Router
 - **Styling**: CSS, Tailwind, MaterialUI
+
+- ## 🚀 Getting Started
+
+To get a local copy up and running, follow these steps:
+
+### Prerequisites
+
+Ensure you have the following installed on your system:
+
+- **Node.js** (v14 or higher)
+- **npm** or **yarn** (package manager)
+
+### 🛠 Setup
+
+1. **Clone the repository**  
+   Open your terminal and clone the repository:
+
+   ```bash
+   git clone https://github.com/your-username/nasa-explorer.git
+   cd nasa-explorer
+   
+2. **Setup frontend**
+     In the previously opened terminal paste the commands below
+    ```bash
+    cd ./frontend/nasa-explorer/
+    npm install
+    npm run dev
+    
+3. **Setup Backend**
+   Open new terminal inn main folder paste the commands below
+    ```bash
+    cd ./backend
+    npm install
+    node server.js
+    
+4. **Setup environment variable**
+    Setup your nasa api key from [https://api.nasa.gov/] in .env variable
+
+5. **Open the app**
+   The app should now be running at:
+   http://localhost:5173
+
+
+   
