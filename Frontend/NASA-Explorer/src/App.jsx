@@ -1,7 +1,7 @@
 import React from "react";
 import Topbar from "./components/Topbar";
 import { Route, Routes, Navigate } from "react-router-dom";
-import Spinner from "react-spinners/RingLoader";
+import Loading  from "./components/loading";
 function App() {
   const Home = React.lazy(() => import("./pages/Home"));
   const MarsRover = React.lazy(() => import("./pages/MarsRover"));
@@ -9,11 +9,6 @@ function App() {
   const AOPD = React.lazy(() => import("./pages/APOD"));
   const Earth = React.lazy(() => import("./pages/Earth"));
 
-  const loading = () => (
-    <div className="flex justify-center items-center h-lvh">
-      <Spinner className="loader" size={150} color="#fff" />
-    </div>
-  );
   return (
     <div
       className="relative flex min-h-screen flex-col bg-[#111422] overflow-x-hidden"
@@ -24,7 +19,7 @@ function App() {
     >
       <div className="layout-container flex h-full grow flex-col">
         <Topbar />
-        <React.Suspense fallback={loading()}>
+        <React.Suspense fallback={Loading()}>
           <Routes>
             <Route exact path="/" name="Home page" element={<Home />} />
             <Route
