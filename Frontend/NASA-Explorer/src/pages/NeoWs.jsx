@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Axios } from "../config/AxiosConfig";
 
 // Helper function to add days to a date
 const addDays = (date, days) => {
@@ -34,13 +35,14 @@ const months = [
 
 const NEOsDashboard = () => {
   // Calendar Data State (default: August 2023)
-  const [currentMonth, setCurrentMonth] = useState(7); // August (0-indexed)
-  const [currentYear, setCurrentYear] = useState(2023);
+  const [currentMonth, setCurrentMonth] = useState(0); // october (0-indexed)
+  const [currentYear, setCurrentYear] = useState(2007);
 
   // State to manage selected start and end dates
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-
+  const [searchable, setSearchable] = useState(false);
+  const [data, setData] = useState([]);
   // Handle month and year navigation
   const handlePrevMonth = () => {
     if (currentMonth === 0) {
@@ -51,6 +53,21 @@ const NEOsDashboard = () => {
     }
   };
 
+  const onSearch = async () => {
+    if (!startDate || !endDate) return;
+    const startYear = startDate.getFullYear();
+    const startMonth = String(startDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const startDay = String(startDate.getDate()).padStart(2, "0");
+    const endYear = endDate.getFullYear();
+    const endMonth = String(endDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const endDay = String(endDate.getDate()).padStart(2, "0");
+
+    await Axios.get(
+      `neows/?start_date=${startYear}-${startMonth}-${startDay} &end_date=${endYear}-${endMonth}-${endDay}`
+    ).then((res) => {
+      setData(Object.values(res.data.data.near_earth_objects)[0]);
+    });
+  };
   const handleNextMonth = () => {
     if (currentMonth === 11) {
       setCurrentMonth(0); // Go to January
@@ -63,7 +80,11 @@ const NEOsDashboard = () => {
   // Handle selecting a start or end date
   const handleDateClick = (day) => {
     const selectedDate = new Date(currentYear, currentMonth, day);
-
+    if (selectedDate >= new Date()) {
+      setSearchable(true);
+      return;
+    }
+    setSearchable(false);
     // If startDate is not selected, set the start date
     if (!startDate || (startDate && endDate)) {
       setStartDate(selectedDate);
@@ -168,62 +189,80 @@ const NEOsDashboard = () => {
 
         {/* Search Button */}
         <div className="flex px-4 py-3">
-          <button className="w-full h-12 bg-[#139cec] text-white font-bold rounded-xl">
+          <button
+            className="w-full h-12 bg-[#139cec] text-white font-bold rounded-xl"
+            disabled={searchable}
+            onClick={() => onSearch()}
+          >
             Search
           </button>
         </div>
 
         {/* Data Table */}
-        <div className="p-4">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-[#325367]">
-              <thead>
-                <tr>
-                  <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
-                    Name
-                  </th>
-                  <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
-                    Size
-                  </th>
-                  <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
-                    Closest Approach
-                  </th>
-                  <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
-                    Velocity
-                  </th>
-                  <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
-                    Distance
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {/* Mock data */}
-                <tr>
-                  <td className="px-4 py-2 text-[#92b5c9] text-sm">
-                    Asteroid 1
-                  </td>
-                  <td className="px-4 py-2 text-[#92b5c9] text-sm">500m</td>
-                  <td className="px-4 py-2 text-[#92b5c9] text-sm">
-                    2024-10-06
-                  </td>
-                  <td className="px-4 py-2 text-[#92b5c9] text-sm">15 km/s</td>
-                  <td className="px-4 py-2 text-[#92b5c9] text-sm">0.05 AU</td>
-                </tr>
-                <tr>
-                  <td className="px-4 py-2 text-[#92b5c9] text-sm">
-                    Asteroid 2
-                  </td>
-                  <td className="px-4 py-2 text-[#92b5c9] text-sm">1.2 km</td>
-                  <td className="px-4 py-2 text-[#92b5c9] text-sm">
-                    2024-10-07
-                  </td>
-                  <td className="px-4 py-2 text-[#92b5c9] text-sm">20 km/s</td>
-                  <td className="px-4 py-2 text-[#92b5c9] text-sm">0.02 AU</td>
-                </tr>
-              </tbody>
-            </table>
+        {
+          <div className="p-4">
+            <div className="overflow-x-auto">
+              {data.length === 0 ? (
+                <div />
+              ) : (
+                <table className="min-w-full divide-y divide-[#325367]">
+                  <thead>
+                    <tr>
+                      <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
+                        Name
+                      </th>
+                      <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
+                        Daimeter
+                      </th>
+                      <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
+                        Miss Distance
+                      </th>
+                      <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
+                        Velocity
+                      </th>
+                      <th className="px-4 py-2 text-[#92b5c9] text-left text-sm font-bold">
+                        Hazardous
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {data.map((details, index) => {
+                      return (
+                        <tr key={index}>
+                          <td className="px-4 py-2 text-[#92b5c9] text-sm">
+                            ss{details.name}
+                          </td>
+                          <td className="px-4 py-2 text-[#92b5c9] text-sm">
+                            {
+                              details.estimated_diameter.kilometers
+                                .estimated_diameter_max
+                            } km
+                          </td>
+                          <td className="px-4 py-2 text-[#92b5c9] text-sm">
+                            {
+                              details.close_approach_data[0].miss_distance
+                                .kilometers
+                            } km
+                          </td>
+                          <td className="px-4 py-2 text-[#92b5c9] text-sm">
+                            {
+                              details.close_approach_data[0].relative_velocity
+                                .kilometers_per_second
+                            }{" "}
+                            km/s
+                          </td>
+                          <td className="px-4 py-2 text-[#92b5c9] text-sm">
+                            {details.s_potentially_hazardous_asteroid ? "TRUE" : "FALSE"}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              )}
+            </div>
           </div>
-        </div>
+        }
       </div>
     </div>
   );

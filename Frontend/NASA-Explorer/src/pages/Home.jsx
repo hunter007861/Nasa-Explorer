@@ -22,12 +22,12 @@ const Home = () => {
             img: "https://cdn.usegalileo.ai/stability/5e085f5a-6a80-4dc6-99e6-e3f42d14c0e6.png",
             pageLink: "/marsrover",
           },
-          {
-            title: "Earth Polychromatic Imaging Camera",
-            description: "Discover daily images of Earth",
-            img: "https://cdn.usegalileo.ai/stability/11cfb18d-f36f-4ba6-a45c-ea2a4f0813a0.png",
-            pageLink: "/earth",
-          },
+          // {
+          //   title: "NASA Image and Video Library",
+          //   description: "Explore stunning images from NASA's space library",
+          //   img: "https://cdn.usegalileo.ai/stability/11cfb18d-f36f-4ba6-a45c-ea2a4f0813a0.png",
+          //   pageLink: "/earth",
+          // },
           {
             title: "Near Earth Object Web Service",
             description: "Discover near Earth objects",
